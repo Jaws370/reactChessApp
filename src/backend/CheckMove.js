@@ -55,8 +55,6 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
     const pieceIsWhite = usableBoard[oldSpaceIndex].toUpperCase() === usableBoard[oldSpaceIndex];
     const capturedPiece = usableBoard[newSpaceIndex];
 
-    console.log(strDifference);
-
     if (newSpaceCheck(activePiece, capturedPiece)) {
 
         switch (activePiece) {
@@ -75,13 +73,13 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                         if (usableBoard[boardPositionNumberToIndex(checkSpace)] !== " ") {
 
-                            return [false, rawBoard];
+                            return [false, rawBoard, previousMoves];
 
                         }
 
                     }
 
-                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                    return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                 }
                 break;
 
@@ -90,7 +88,7 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                 if (strAbsDifference === "[1,2]" ||
                     strAbsDifference === "[2,1]") {
-                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                        return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                 }
                 break;
 
@@ -109,13 +107,13 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                         if (usableBoard[boardPositionNumberToIndex(checkSpace)] !== " ") {
 
-                            return [false, rawBoard];
+                            return [false, rawBoard, previousMoves];
 
                         }
 
                     }
 
-                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                    return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                 }
                 break;
 
@@ -130,11 +128,11 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
                                     [oldSpaceNumber[0],
                                     oldSpaceNumber[1] + (difference[1] / 2)])] === " " &&
                                 !hasMoved)) {
-                            return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                                    return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                         }
                     } else if (strDifference === "[1,1]" ||
                         strDifference === "[-1,1]") {
-                        return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                            return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                     }
                 } else {
                     if (capturedPiece === " ") {
@@ -144,11 +142,11 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
                                     [oldSpaceNumber[0],
                                     oldSpaceNumber[1] + (difference[1] / 2)])] === " " &&
                                 !hasMoved)) {
-                            return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                                    return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                         }
                     } else if (strDifference === "[1,-1]" ||
                         strDifference === "[-1,-1]") {
-                        return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                            return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                     }
                 }
                 break;
@@ -158,7 +156,7 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                 if (absDifference[0] <= 1 &&
                     absDifference[1] <= 1) {
-                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                        return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                 }
                 if (pieceIsWhite) {
                     if (!previousMoves.includes("h1")) {
@@ -167,7 +165,8 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
                             if (usableBoard[61] === " " &&
                                 usableBoard[62] === " ") {
                                 rawBoard = updateFen("h1", "f1", rawBoard);
-                                return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                                previousMoves = [...previousMoves, "h1", "f1"];
+                                return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                             }
                         }
                     }
@@ -178,7 +177,8 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
                                 usableBoard[58] === " " &&
                                 usableBoard[59] === " ") {
                                 rawBoard = updateFen("a1", "d1", rawBoard);
-                                return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                                previousMoves = [...previousMoves, "a1", "d1"];
+                                return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                             }
                         }
                     }
@@ -189,7 +189,8 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
                             if (usableBoard[5] === " " &&
                                 usableBoard[6] === " ") {
                                 rawBoard = updateFen("h8", "f8", rawBoard);
-                                return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                                previousMoves = [...previousMoves, "h8", "f8"];
+                                return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                             }
                         }
                     }
@@ -200,7 +201,8 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
                                 usableBoard[2] === " " &&
                                 usableBoard[3] === " ") {
                                 rawBoard = updateFen("a8", "d8", rawBoard);
-                                return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                                previousMoves = [...previousMoves, "a8", "d8"];
+                                return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                             }
                         }
                     }
@@ -221,13 +223,14 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                         if (usableBoard[boardPositionNumberToIndex(checkSpace)] !== " ") {
 
-                            return [false, rawBoard];
+                            return [false, rawBoard, previousMoves];
 
                         }
 
                     }
 
-                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                    return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
+                    
                 } else if (absDifference.includes(0)) {
 
                     const value = (difference.indexOf(0) === 0) ? 1 : 0;
@@ -240,13 +243,13 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                         if (usableBoard[boardPositionNumberToIndex(checkSpace)] !== " ") {
 
-                            return [false, rawBoard];
+                            return [false, rawBoard, previousMoves];
 
                         }
 
                     }
 
-                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                    return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
                 }
                 break;
 
@@ -258,6 +261,6 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
     }
 
-    return [false, rawBoard];
+    return [false, rawBoard, previousMoves];
 
 }

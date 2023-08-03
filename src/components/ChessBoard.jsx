@@ -28,12 +28,12 @@ export function ChessBoard() {
 
         if (moveCouple.length === 2) {
 
-            const [isGoodMove, newBoard] = checkMove(moveCouple[0], moveCouple[1], rawBoard, previousMoves);
+            const [isGoodMove, newBoard, newPreviousMoves] = checkMove(moveCouple[0], moveCouple[1], rawBoard, previousMoves);
 
             if (isGoodMove) {
 
                 setRawBoard(newBoard);
-                setPreviousMoves([...previousMoves, moveCouple[1], moveCouple[0]]);
+                setPreviousMoves(newPreviousMoves);
 
             }
 
