@@ -50,8 +50,9 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
     const absDifference = [Math.abs(difference[0]), Math.abs(difference[1])];
     const strAbsDifference = JSON.stringify(absDifference);
-    
+
     const activePiece = usableBoard[oldSpaceIndex];
+    const pieceIsWhite = usableBoard[oldSpaceIndex].toUpperCase() === usableBoard[oldSpaceIndex];
     const capturedPiece = usableBoard[newSpaceIndex];
 
     if (newSpaceCheck(activePiece, capturedPiece)) {
@@ -119,17 +120,34 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
             case "P":
             case "p":
 
-                if (capturedPiece === " ") {
-                    if (strAbsDifference === "[0,1]" ||
-                        (strAbsDifference === "[0,2]" &&
-                            usableBoard[boardPositionNumberToIndex(
-                                [oldSpace[0],
-                                oldSpace[1] + (difference[1] / 2)])] === " " &&
-                            !hasMoved)) {
+                if (pieceIsWhite) {
+                    if (capturedPiece === " ") {
+                        if (strDifference === "[0,1]" ||
+                            (strDifference === "[0,2]" &&
+                                usableBoard[boardPositionNumberToIndex(
+                                    [oldSpace[0],
+                                    oldSpace[1] + (difference[1] / 2)])] === " " &&
+                                !hasMoved)) {
+                            return true;
+                        }
+                    } else if (strDifference === "[1,1]" ||
+                        strDifference === "[-1,1]") {
                         return true;
                     }
-                } else if (strAbsDifference === "[1,1]") {
-                    return true;
+                } else {
+                    if (capturedPiece === " ") {
+                        if (strDifference === "[0,-1]" ||
+                            (strDifference === "[0,-2]" &&
+                                usableBoard[boardPositionNumberToIndex(
+                                    [oldSpace[0],
+                                    oldSpace[1] + (difference[1] / 2)])] === " " &&
+                                !hasMoved)) {
+                            return true;
+                        }
+                    } else if (strDifference === "[1,-1]" ||
+                        strDifference === "[-1,-1]") {
+                        return true;
+                    }
                 }
                 break;
 
