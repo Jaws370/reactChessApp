@@ -1,7 +1,7 @@
 import { fenToUsable } from "./FenToUsable";
 import { boardPositionLetterToNumber } from "./BoardPositionLetterToNumber";
 import { boardPositionNumberToIndex } from "./BoardPositionNumberToIndex";
-//import { updateFen } from "./UpdateFen";
+import { updateFen } from "./UpdateFen";
 
 function newSpaceCheck(activePiece, capturedPiece) {
 
@@ -39,13 +39,13 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
     const usableBoard = fenToUsable(rawBoard);
 
-    oldSpace = boardPositionLetterToNumber(oldSpace);
-    const oldSpaceIndex = boardPositionNumberToIndex(oldSpace);
+    const oldSpaceNumber = boardPositionLetterToNumber(oldSpace);
+    const oldSpaceIndex = boardPositionNumberToIndex(oldSpaceNumber);
 
-    newSpace = boardPositionLetterToNumber(newSpace);
-    const newSpaceIndex = boardPositionNumberToIndex(newSpace);
+    const newSpaceNumber = boardPositionLetterToNumber(newSpace);
+    const newSpaceIndex = boardPositionNumberToIndex(newSpaceNumber);
 
-    const difference = [(newSpace[0] - oldSpace[0]), (newSpace[1] - oldSpace[1])];
+    const difference = [(newSpaceNumber[0] - oldSpaceNumber[0]), (newSpaceNumber[1] - oldSpaceNumber[1])];
     const strDifference = JSON.stringify(difference);
 
     const absDifference = [Math.abs(difference[0]), Math.abs(difference[1])];
@@ -54,6 +54,8 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
     const activePiece = usableBoard[oldSpaceIndex];
     const pieceIsWhite = usableBoard[oldSpaceIndex].toUpperCase() === usableBoard[oldSpaceIndex];
     const capturedPiece = usableBoard[newSpaceIndex];
+
+    console.log(strDifference);
 
     if (newSpaceCheck(activePiece, capturedPiece)) {
 
@@ -69,17 +71,17 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                     for (let i = 1; i < absDifference[0]; i++) {
 
-                        const checkSpace = [oldSpace[0] + (mod0 * i), oldSpace[1] + (mod1 * i)];
+                        const checkSpace = [oldSpaceNumber[0] + (mod0 * i), oldSpaceNumber[1] + (mod1 * i)];
 
                         if (usableBoard[boardPositionNumberToIndex(checkSpace)] !== " ") {
 
-                            return false;
+                            return [false, rawBoard];
 
                         }
 
                     }
 
-                    return true;
+                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
                 }
                 break;
 
@@ -88,7 +90,7 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                 if (strAbsDifference === "[1,2]" ||
                     strAbsDifference === "[2,1]") {
-                    return true;
+                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
                 }
                 break;
 
@@ -103,17 +105,17 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                     for (let i = 1; i < absDifference[value]; i++) {
 
-                        const checkSpace = value ? [oldSpace[0], oldSpace[1] + (mod * i)] : [oldSpace[0] + (mod * i), oldSpace[1]];
+                        const checkSpace = value ? [oldSpaceNumber[0], oldSpaceNumber[1] + (mod * i)] : [oldSpaceNumber[0] + (mod * i), oldSpaceNumber[1]];
 
                         if (usableBoard[boardPositionNumberToIndex(checkSpace)] !== " ") {
 
-                            return false;
+                            return [false, rawBoard];
 
                         }
 
                     }
 
-                    return true;
+                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
                 }
                 break;
 
@@ -125,28 +127,28 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
                         if (strDifference === "[0,1]" ||
                             (strDifference === "[0,2]" &&
                                 usableBoard[boardPositionNumberToIndex(
-                                    [oldSpace[0],
-                                    oldSpace[1] + (difference[1] / 2)])] === " " &&
+                                    [oldSpaceNumber[0],
+                                    oldSpaceNumber[1] + (difference[1] / 2)])] === " " &&
                                 !hasMoved)) {
-                            return true;
+                            return [true, updateFen(oldSpace, newSpace, rawBoard)];
                         }
                     } else if (strDifference === "[1,1]" ||
                         strDifference === "[-1,1]") {
-                        return true;
+                        return [true, updateFen(oldSpace, newSpace, rawBoard)];
                     }
                 } else {
                     if (capturedPiece === " ") {
                         if (strDifference === "[0,-1]" ||
                             (strDifference === "[0,-2]" &&
                                 usableBoard[boardPositionNumberToIndex(
-                                    [oldSpace[0],
-                                    oldSpace[1] + (difference[1] / 2)])] === " " &&
+                                    [oldSpaceNumber[0],
+                                    oldSpaceNumber[1] + (difference[1] / 2)])] === " " &&
                                 !hasMoved)) {
-                            return true;
+                            return [true, updateFen(oldSpace, newSpace, rawBoard)];
                         }
                     } else if (strDifference === "[1,-1]" ||
                         strDifference === "[-1,-1]") {
-                        return true;
+                        return [true, updateFen(oldSpace, newSpace, rawBoard)];
                     }
                 }
                 break;
@@ -156,24 +158,50 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                 if (absDifference[0] <= 1 &&
                     absDifference[1] <= 1) {
-                    return true;
+                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
                 }
-                if (!previousMoves.includes("h1")) {
-                    if (!hasMoved &&
-                        strDifference === "[2,0]") {
-                        if (usableBoard[61] === " " &&
-                            usableBoard[62] === " ") {
-                            return true;
+                if (pieceIsWhite) {
+                    if (!previousMoves.includes("h1")) {
+                        if (!hasMoved &&
+                            strDifference === "[2,0]") {
+                            if (usableBoard[61] === " " &&
+                                usableBoard[62] === " ") {
+                                rawBoard = updateFen("h1", "f1", rawBoard);
+                                return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                            }
                         }
                     }
-                }
-                if (!previousMoves.includes("a1")) {
-                    if (!hasMoved &&
-                        strDifference === "[-2,0]") {
-                        if (usableBoard[57] === " " &&
-                            usableBoard[58] === " " &&
-                            usableBoard[59] === " ") {
-                            return true;
+                    if (!previousMoves.includes("a1")) {
+                        if (!hasMoved &&
+                            strDifference === "[-2,0]") {
+                            if (usableBoard[57] === " " &&
+                                usableBoard[58] === " " &&
+                                usableBoard[59] === " ") {
+                                rawBoard = updateFen("a1", "d1", rawBoard);
+                                return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                            }
+                        }
+                    }
+                } else {
+                    if (!previousMoves.includes("h8")) {
+                        if (!hasMoved &&
+                            strDifference === "[2,0]") {
+                            if (usableBoard[5] === " " &&
+                                usableBoard[6] === " ") {
+                                rawBoard = updateFen("h8", "f8", rawBoard);
+                                return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                            }
+                        }
+                    }
+                    if (!previousMoves.includes("a8")) {
+                        if (!hasMoved &&
+                            strDifference === "[-2,0]") {
+                            if (usableBoard[1] === " " &&
+                                usableBoard[2] === " " &&
+                                usableBoard[3] === " ") {
+                                rawBoard = updateFen("a8", "d8", rawBoard);
+                                return [true, updateFen(oldSpace, newSpace, rawBoard)];
+                            }
                         }
                     }
                 }
@@ -189,17 +217,17 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                     for (let i = 1; i < absDifference[0]; i++) {
 
-                        const checkSpace = [oldSpace[0] + (mod0 * i), oldSpace[1] + (mod1 * i)];
+                        const checkSpace = [oldSpaceNumber[0] + (mod0 * i), oldSpaceNumber[1] + (mod1 * i)];
 
                         if (usableBoard[boardPositionNumberToIndex(checkSpace)] !== " ") {
 
-                            return false;
+                            return [false, rawBoard];
 
                         }
 
                     }
 
-                    return true;
+                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
                 } else if (absDifference.includes(0)) {
 
                     const value = (difference.indexOf(0) === 0) ? 1 : 0;
@@ -208,17 +236,17 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
                     for (let i = 1; i < absDifference[value]; i++) {
 
-                        const checkSpace = value ? [oldSpace[0], oldSpace[1] + (mod * i)] : [oldSpace[0] + (mod * i), oldSpace[1]];
+                        const checkSpace = value ? [oldSpaceNumber[0], oldSpaceNumber[1] + (mod * i)] : [oldSpaceNumber[0] + (mod * i), oldSpaceNumber[1]];
 
                         if (usableBoard[boardPositionNumberToIndex(checkSpace)] !== " ") {
 
-                            return false;
+                            return [false, rawBoard];
 
                         }
 
                     }
 
-                    return true;
+                    return [true, updateFen(oldSpace, newSpace, rawBoard)];
                 }
                 break;
 
@@ -230,6 +258,6 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
 
     }
 
-    return false;
+    return [false, rawBoard];
 
 }

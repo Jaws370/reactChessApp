@@ -6,7 +6,6 @@ import './ChessBoard.css';
 import { ChessPiece } from './ChessPiece.jsx';
 
 import { fenToUsable } from '../backend/FenToUsable.js';
-import { updateFen } from '../backend/UpdateFen.js';
 import { checkMove } from '../backend/CheckMove.js';
 
 export function ChessBoard() {
@@ -26,11 +25,14 @@ export function ChessBoard() {
     var usableBoard = fenToUsable(rawBoard);
 
     useEffect(() => {
+
         if (moveCouple.length === 2) {
 
-            if (checkMove(moveCouple[0], moveCouple[1], rawBoard, previousMoves)) {
+            const [isGoodMove, newBoard] = checkMove(moveCouple[0], moveCouple[1], rawBoard, previousMoves);
 
-                setRawBoard(updateFen(moveCouple[0], moveCouple[1], rawBoard));
+            if (isGoodMove) {
+
+                setRawBoard(newBoard);
                 setPreviousMoves([...previousMoves, moveCouple[1], moveCouple[0]]);
 
             }
@@ -38,6 +40,7 @@ export function ChessBoard() {
             setMoveCouple([]);
 
         }
+
     }, [moveCouple, rawBoard, previousMoves])
 
     const handleClick = event => {
