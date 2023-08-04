@@ -45,7 +45,7 @@ export function ChessBoard() {
 
     const handleClick = event => {
 
-        if ((event.currentTarget.getAttribute("type") !== " " || moveCouple.length === 1) &&
+        if ((event.currentTarget.getAttribute("data-piece") !== " " || moveCouple.length === 1) &&
             moveCouple[0] !== event.currentTarget.id) {
 
             setMoveCouple([...moveCouple, event.currentTarget.id]);
@@ -56,21 +56,23 @@ export function ChessBoard() {
 
     for (let i = 0; i < SPACES; i++) {
 
-        const SPACE_COLOR = !((i + Math.floor(i / 8)) % 2);
+        const IS_WHITE = !((i + Math.floor(i / 8)) % 2) ? "white" : "black";
 
         const ROW = 8 - Math.floor(i / 8);
 
         const COLLUMN = ALPHABET_INDEX[i % 8];
 
-        const HIGHLIGHT = moveCouple[0] === (COLLUMN + ROW);
+        const IS_HIGHLIGHTED = moveCouple[0] === (COLLUMN + ROW);
 
         chessBoard.push(
 
-            <div className={`space ${SPACE_COLOR ? "white" : "black"} ${HIGHLIGHT ? "highlight" : ""}`}
-                id={COLLUMN + ROW}
+            <div className="square"
                 key={COLLUMN + ROW}
+                id={COLLUMN + ROW}
                 onClick={handleClick}
-                type={usableBoard[i]}>
+                data-highlighted={IS_HIGHLIGHTED}
+                data-color={IS_WHITE}
+                data-piece={usableBoard[i]}>
 
                 <ChessPiece id={COLLUMN + ROW} type={usableBoard[i]} />
 

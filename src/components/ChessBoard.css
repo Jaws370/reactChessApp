@@ -6,19 +6,18 @@
     grid: 12.5% / auto auto auto auto auto auto auto auto;
 }
 
-.space {
+.square {
     width: 100%;
     height: 100%;
 }
 
-.white {
+.square[data-color="white"] {
     background-color: rgb(238, 238, 210);
 }
 
-.black {
+.square[data-color="black"] {
     background-color: transparent;
 }
-
-.highlight {
+.square[data-highlighted=true] {
     background-color: rgb(187, 203, 43);
 }

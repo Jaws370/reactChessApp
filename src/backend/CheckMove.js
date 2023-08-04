@@ -230,7 +230,7 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
                     }
 
                     return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
-                    
+
                 } else if (absDifference.includes(0)) {
 
                     const value = (difference.indexOf(0) === 0) ? 1 : 0;
@@ -250,6 +250,7 @@ export function checkMove(oldSpace, newSpace, rawBoard, previousMoves) {
                     }
 
                     return [true, updateFen(oldSpace, newSpace, rawBoard), [...previousMoves, oldSpace, newSpace]];
+                    
                 }
                 break;
 
