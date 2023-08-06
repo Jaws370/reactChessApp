@@ -22,14 +22,6 @@ export function ChessPiece(props) {
 
     var source;
 
-    if (props.type === " ") {
-
-        return (
-            <img id={props.name} className='piece' src={blank} alt='piece' />
-        );
-
-    }
-
     switch (props.type) {
         case "p":
             source = bPawn;

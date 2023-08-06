@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import './ChessBoard.css';
 
@@ -45,8 +44,8 @@ export function ChessBoard() {
 
     const handleClick = event => {
 
-        if ((event.currentTarget.getAttribute("data-piece") !== " " || moveCouple.length === 1) &&
-            moveCouple[0] !== event.currentTarget.id) {
+        if ((event.currentTarget.getAttribute("data-piece") !== " " ||
+            moveCouple.length === 1) && moveCouple[0] !== event.currentTarget.id) {
 
             setMoveCouple([...moveCouple, event.currentTarget.id]);
 
